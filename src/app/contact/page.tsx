@@ -4,12 +4,25 @@ import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import sendEmail from "../serverActions/sendEmailAction";
 import Loader from "../about/loader";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Contact = () => {
   // This useRef is added to the contact form, so we can reset the form when the email is sent
   const formRef = useRef<HTMLFormElement>(null);
 
   const [disableForm, setDisableForm] = useState(false);
+
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
+
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  const handleChange = (token: string | null) => {
+    setCaptchaToken(token);
+  };
+
+  function handleExpired() {
+    setCaptchaToken(null);
+  }
 
   return (
     <main className="px-4 pt-[150px] min-[550px]:px-12 max-w-[600px] min-[800px]:max-w-[1400px] mx-auto min-[800px]:grid grid-cols-2 gap-4">
@@ -33,18 +46,24 @@ const Contact = () => {
         onSubmit={async (e) => {
           e.preventDefault();
 
-          if (!disableForm) {
+          if (!disableForm && captchaToken) {
             setDisableForm(true);
 
             // Get the form data
             const formData = new FormData(e.currentTarget);
 
-            const result = await sendEmail(formData);
+            const result = await sendEmail(formData, captchaToken);
 
             if (result?.sent) {
+              // This clears the recaptcha, so the user can tick the box again
+              recaptchaRef.current?.reset();
+
               // If the mail is sent successfully, then we clear all the fields in the form.
               // First, we make sure that the 'formRef.current' is NOT 'null' or 'undefined' by putting a question mark (?) in front of it
               formRef.current?.reset();
+
+              // Clear the token
+              setCaptchaToken(null);
 
               // NOTE: The <Toaster/> is in 'layout.js'
               toast.success("Email sent successfully!");
@@ -53,6 +72,8 @@ const Contact = () => {
             } else {
               toast.error("Email sending failed!");
               setDisableForm(false);
+              recaptchaRef.current?.reset();
+              setCaptchaToken(null);
             }
           }
         }}
@@ -137,9 +158,17 @@ const Contact = () => {
           </label>
         </div>
 
+        <ReCAPTCHA
+          // NOTE: We added 'NEXT_PUBLIC_', to tell NextJS that we want to see this env variable in the client side, and not just the server side
+          sitekey={process.env.NEXT_PUBLIC_reCAPTCHA_SITE_KEY as string}
+          ref={recaptchaRef}
+          onChange={handleChange}
+          onExpired={handleExpired}
+        />
+
         <button
           type="submit"
-          disabled={disableForm}
+          disabled={disableForm || !captchaToken}
           className="bg-[var(--primary-color)] w-full rounded-xl mx-auto text-white text-lg uppercase h-[50px] font-semibold my-8 flex justify-center items-center cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-400"
         >
           {disableForm ? <Loader /> : "Submit"}

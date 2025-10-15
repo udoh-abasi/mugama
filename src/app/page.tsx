@@ -1,10 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import { GoShield } from "react-icons/go";
-import { IoHardwareChipOutline } from "react-icons/io5";
+import { IoCloudDownloadOutline, IoHardwareChipOutline } from "react-icons/io5";
 import { LuMonitorCog, LuMonitorDot } from "react-icons/lu";
 import { MdNetworkCheck } from "react-icons/md";
 import { PiMonitor } from "react-icons/pi";
 import * as motion from "motion/react-client";
+import { useRouter } from "next/navigation";
+import { GiArtificialIntelligence } from "react-icons/gi";
 
 export default function Home() {
   const myAnimation = {
@@ -18,6 +22,8 @@ export default function Home() {
       transform: "translateY(0px)",
     },
   };
+
+  const router = useRouter();
 
   return (
     <main>
@@ -38,6 +44,9 @@ export default function Home() {
             <button
               type="button"
               className="block cursor-pointer w-[140px] h-[35px] min-[1000px]:w-[160px] min-[1000px]:h-[45px] min-[1000px]:text-lg bg-[var(--primary-color)] text-white rounded-lg"
+              onClick={() => {
+                router.push("/products");
+              }}
             >
               Our Solutions
             </button>
@@ -205,6 +214,43 @@ export default function Home() {
       </div>
 
       <section className="p-4 min-[550px]:px-12 min-[605px]:mx-auto max-w-[605px] min-[665px]:px-0 min-[800px]:py-12 min-[800px]:px-4 min-[800px]:max-w-[1000px] min-[800px]:grid grid-cols-3 gap-4">
+        <motion.article
+          className="p-6 mt-8 min-[800]:mt-0 mb-4 text-justify rounded-4xl  min-h-[270px] shadow-[0px_0px_15px_rgba(0,0,0,0.3)]"
+          variants={myAnimation}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <h3 className="text-[var(--primary-color)] text-xl font-semibold pb-3">
+            <GiArtificialIntelligence className="text-4xl mb-4" />
+            AI Services
+          </h3>
+          <p>
+            We offer comprehensive AI solutions spanning Data Modeling, Machine
+            Learning, Computer Vision, and Intelligent Automation to help
+            businesses make smarter, data-driven decisions.
+          </p>
+        </motion.article>
+
+        <motion.article
+          className="p-6 mt-8 min-[800]:mt-0 mb-4 text-justify rounded-4xl  min-h-[270px] shadow-[0px_0px_15px_rgba(0,0,0,0.3)]"
+          variants={myAnimation}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <h3 className="text-[var(--primary-color)] text-xl font-semibold pb-3">
+            <IoCloudDownloadOutline className="text-4xl mb-4" />
+            Cloud
+          </h3>
+          <p>
+            We offer expert Cloud Advisory Services, Infrastructure as a Service
+            (IaaS), Cloud Strategy, and Private Cloud.
+          </p>
+        </motion.article>
+
         <motion.article
           className="p-6 mt-8 min-[800]:mt-0 mb-4 text-justify rounded-4xl  min-h-[270px] shadow-[0px_0px_15px_rgba(0,0,0,0.3)]"
           variants={myAnimation}
